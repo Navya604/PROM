@@ -785,3 +785,48 @@ Proper execution, validation, and debugging are essential to ensure:
 * Reduction of operational risk
 
 Analysts must always combine automation output with operational review and validation before final submission or upload activities.
+
+
+
+
+
+
+
+Prompt Name: Day NAV Python Debugging Support
+
+I am debugging the Day NAV Python model used for NAV/MTD extraction.
+
+Issue:
+[paste issue here]
+
+Error message from Dev Shell:
+[paste full error here]
+
+Code section:
+[paste relevant code here]
+
+Files used:
+- Source file:
+- Helper/workflow file:
+- Output file:
+
+Please help me debug this step by step.
+
+Provide:
+1. What the error means in simple terms
+2. Likely root cause
+3. Whether the issue is file-related, mapping-related, Outlook-related, PDF/Excel extraction-related, or code-related
+4. Exact line or section likely causing the issue
+5. What print statements I should add
+6. Where I should add those print statements
+7. What output I should expect from each print statement
+8. How to interpret the print results
+9. Step-by-step fix
+10. Validation checks after fixing
+
+Important:
+- Do not assume missing values
+- If merge keys may be mismatched, suggest key normalization checks
+- If PDF extraction may have failed, suggest text preview checks
+- If Outlook extraction may have failed, suggest mailbox/category checks
+- Keep the explanation simple enough for an analyst to follow
