@@ -1,800 +1,547 @@
-# SOP 1 – Day NAV Python Model
+Outlook Cleanser Python Model
+1. Purpose
 
-# 1. Purpose
+The Outlook Cleanser Python Model is an automation developed to reduce manual mailbox cleanup effort for the NAV team. The model connects directly to Outlook using Python and automatically reviews emails within the mailbox to identify:
 
-The Day NAV Python Model is an automated Python-based extraction and processing model developed to support NAV operational activities for Hedge Funds within NAHF and LATAM HF populations.
+Duplicate emails
+No-action emails
+Emails requiring category updates
+Emails that match predefined helper-file rules
 
-The primary objective of the model is to reduce manual extraction effort by automatically reading client files received through Outlook emails and extracting the following information:
+The model helps improve mailbox organization and operational efficiency by reducing the amount of manual review required by analysts.
 
-* Fund Name
-* Fund UCN
-* NAV
-* MTD Performance
-* NAV Date
-* Currency
-* Additional supporting fund-level information
+The automation uses:
 
-The model helps improve:
+Outlook COM connection
+Helper Excel files
+Category logic
+Sender/domain matching
+Subject keyword matching
+Duplicate email comparison logic
 
-* Operational efficiency
-* Accuracy of NAV extraction
-* Standardization of output files
-* Reduction of manual copy/paste work
-* Faster upload readiness for RBRM and workflow processes
+This process is executed through Dev Shell.
 
-The model is executed daily through Dev Shell and supports multiple hedge fund families.
+2. Process Overview
 
----
+The Outlook Cleanser Model performs the following activities internally:
 
-# 2. Scope
+Step	Process
+1	Connects to Outlook mailbox
+2	Reads Inbox emails
+3	Extracts email properties
+4	Reads helper mapping file
+5	Identifies no-action emails
+6	Identifies duplicate emails
+7	Applies categories back to Outlook
+8	Updates mailbox tagging
+3. Required Inputs
+Input File / Source	Purpose
+Outlook Mailbox	Source of emails
+Helper Excel File	Contains keyword/category rules
+Python Script	Main automation script
+Shared Drive Access	Required for helper/output files
+4. One-Time Package Installation
 
-This SOP applies to:
+Before running the model for the first time, install required packages in Dev Shell.
 
-* NAV Analysts
-* Hedge Fund Operations Analysts
-* NAV Reporting Team
-* Analysts responsible for daily NAV extraction and validation activities
-
-This SOP covers:
-
-* Model setup
-* Package installation
-* Dev Shell execution
-* Input file preparation
-* Validation steps
-* Debugging process
-* Error handling
-* Operational recovery steps
-* Escalation requirements
-
----
-
-# 3. IA / Fund Families Covered
-
-The Day NAV model currently supports multiple hedge fund families.
-
-Examples include:
-
-* Bridgewater Associates LP
-* Brigade Capital Management LP
-* Arena Investors LP
-* Mariner Investment Group LLC
-* Orbis Investment Management Limited
-* Additional supported NAHF and LATAM hedge fund families
-
-Some fund families use:
-
-* PDF extraction
-* Excel extraction
-* Outlook email extraction
-* Website extraction
-* Helper mapping files
-
-Each family may have slightly different extraction logic depending on:
-
-* File structure
-* NAV layout
-* MTD placement
-* Naming convention
-* Currency format
-* File delivery method
-
----
-
-# 4. Frequency
-
-Frequency:
-
-* Daily
-
-Execution Timing:
-
-* Generally executed during daily NAV gathering process
-* Typically after client files are received in Outlook mailbox
-* Executed before workflow validation and RBRM upload activities
-
----
-
-# 5. Prerequisites
-
-Before running the model, confirm the following:
-
-## 5.1 System Access
-
-The analyst must have:
-
-* Dev Shell access
-* Python installed
-* Shared drive access
-* Outlook access
-* Folder permissions
-* Read/write access to model directories
-
-## 5.2 Required Folders
-
-Ensure the following folders are accessible:
-
-* Input source folder
-* Helper/reference file folder
-* Output folder
-* Audit/archive folder
-
-## 5.3 Required Python Packages
-
-The required packages only need to be installed once in Dev Shell.
-
----
-
-# 6. One-Time Package Installation in Dev Shell
-
-Open Dev Shell and execute the following command:
-
-```python
 pip install pandas numpy openpyxl xlsxwriter customtkinter pywin32 pyxlsb virtualenv autopep8 pylint black tkcalendar pyinstaller python-dateutil PyMuPDF fuzzywuzzy pdfplumber msoffcrypto-tool xlrd
-```
 
-Note:
+This only needs to be completed once.
 
-If packages are already installed previously, there is no need to reinstall them every day.
+5. How to Execute the Model
+Step 1 – Open Outlook
 
----
+Before running the model:
 
-# 7. How to Execute the Day NAV Model in Dev Shell
+Open Outlook
+Confirm mailbox is fully loaded
+Confirm Inbox is synced
+Confirm shared mailbox is accessible
 
-## Step 1 – Open Dev Shell
+Do not execute the model if Outlook is frozen or disconnected.
 
-Open Dev Shell from the approved corporate environment.
+Step 2 – Open Dev Shell
 
-Wait until the terminal loads successfully.
+Launch Dev Shell from the approved corporate environment.
 
----
+Wait until terminal loads completely.
 
-## Step 2 – Navigate to the Model Directory
-
-Use the appropriate shared drive path.
-
-Example:
-
-```python
-G:
-cd G:\2 - Transitory Records\NAV\Hedge Funds\Python Programs\Day NAV
-```
-
-Important:
-
-The cd command is critical because the model reads helper files and output files from the current working directory.
-
-If the wrong directory is used:
-
-* Files may not load
-* Helper mappings may fail
-* Output files may not generate
-* Incorrect files may be processed
-
----
-
-## Step 3 – Execute the Python Script
-
-Run the model using:
-
-```python
-python day_nav.py
-```
-
-or
-
-```python
-python "day_nav.py"
-```
-
-depending on the file naming convention.
-
----
-
-## Step 4 – Monitor Dev Shell Terminal
-
-After execution begins, monitor:
-
-* Print statements
-* Warning messages
-* Missing file alerts
-* Merge counts
-* Fund extraction counts
-* Error traceback messages
-
-Do not close Dev Shell during execution.
-
----
-
-## Step 5 – Select Files if GUI Opens
-
-Some Day NAV models use a Tkinter GUI/file picker.
-
-If prompted:
-
-* Select the correct source files
-* Select the correct workflow/helper file
-* Confirm the selected month-end files
-* Avoid selecting older files accidentally
-
-Always verify:
-
-* Correct reporting month
-* Correct fund family
-* Correct NAV date
-
-before proceeding.
-
----
-
-## Step 6 – Allow Outlook Access Prompt
-
-If Outlook automation is used, a Microsoft Outlook warning may appear.
+Step 3 – Navigate to Model Folder
 
 Example:
 
-“A program is trying to access email information stored in Outlook.”
+R:
+cd "R:\Mumbai\EMEA FUNDS\NAV GATHERING\GLOBAL NAV GATHERING\Automation\Email Tagging Modified(Internal) - JPM\New JPM code"
 
-Action:
+The path may vary depending on the environment.
 
-* Select Allow access
-* Choose the required duration
-* Continue execution
+Step 4 – Execute Python Script
+python "TAG.py"
 
-If access is denied:
+After execution begins, do not close Dev Shell.
 
-* Email extraction will fail
-* Outlook scanning logic will not run
+6. Detailed Process Explanation
+6.1 Outlook Connection
 
----
+The model first creates an Outlook COM connection using pywin32.
 
-# 8. Internal Processing Logic Performed by the Model
+This allows Python to:
 
-The model performs multiple automated steps internally.
+Read Outlook folders
+Read email properties
+Update categories
+Access shared mailboxes
 
-## 8.1 Outlook Email Scan
+The model attempts to connect to:
 
-The model scans Outlook mailbox folders searching for:
+Main mailbox
+Shared mailbox
+Backup mailbox path if needed
+6.2 Reading Emails
 
-* Relevant client emails
-* Approved categories/tags
-* In-scope hedge fund families
-* Valid attachments
+The model scans Inbox emails and extracts:
 
-The model may filter based on:
+Subject
+Sender email
+Categories
+EntryID
+Attachment names
+Email body
 
-* Subject line
-* Sender email
-* Outlook category
-* Attachment name
-* Date received
+EntryID is important because it uniquely identifies the Outlook message.
 
----
+6.3 Helper File Logic
 
-## 8.2 Attachment Extraction
+The model reads a helper Excel file containing:
 
-The model extracts:
+Approved sender emails
+Domains
+Subject keywords
+Categories
 
-* PDF files
-* Excel files
-* CSV files
-* Client return files
-* NAV statements
+The helper file is used to determine:
 
-Attachments are saved locally or processed directly.
+No-action emails
+Auto-tagging logic
+Category assignment
+6.4 Duplicate Detection Logic
 
----
+The model identifies duplicate emails using:
 
-## 8.3 PDF Parsing
+Email subject
+Email body similarity
+Attachment names
 
-For PDF families, the model:
+Image attachments such as:
 
-* Reads PDF text
-* Searches for NAV values
-* Searches for MTD values
-* Identifies latest month values
-* Extracts fund-level information
+.png
+.jpg
+.jpeg
 
-Examples:
+are ignored during duplicate comparison.
 
-* Fund size extraction
-* Ending Equity extraction
-* Monthly Gross extraction
-* Rate of Return extraction
+6.5 Outlook Category Updates
 
----
-
-## 8.4 Excel Parsing
-
-For Excel-based families, the model:
-
-* Reads Excel sheets
-* Locates required tabs
-* Extracts latest available rows
-* Converts values into standardized format
-
----
-
-## 8.5 Data Standardization
-
-The model standardizes:
-
-* Fund codes
-* UCNs
-* Currency values
-* Percentages
-* Negative values
-* Date formats
+Once matching logic is complete, the model updates Outlook categories automatically.
 
 Examples:
 
-* Removes extra spaces
-* Converts text to uppercase
-* Preserves leading zeros in UCN
-* Converts (0.45) to -0.45
+No Action
+Duplicate
+Delaware
+External Sender
+7. Validation Steps
 
----
+After execution:
 
-## 8.6 Merge Logic
+7.1 Validate Categories
 
-The model merges extracted data with:
+Review sample emails and confirm:
 
-* Workflow files
-* Helper mapping files
-* Fund reference files
-* UCN mapping sheets
+Correct category applied
+No incorrect tagging
+No important client emails incorrectly categorized
+7.2 Validate Duplicate Logic
 
-This allows:
+Confirm duplicate emails are actual duplicates.
 
-* Fund identification
-* UCN matching
-* Region assignment
-* Final output standardization
+Check:
 
----
+Subject
+Sender
+Attachments
+7.3 Validate No-Action Logic
 
-## 8.7 Output File Creation
-
-The model generates:
-
-* Standardized Excel output
-* Validation-ready data
-* NAV extraction summary
-* Exception rows if applicable
-
-Output files are generally saved in:
-
-* Same model directory
-* Output folder
-* Shared drive location
-
----
-
-# 9. Expected Inputs
-
-The following files may be required depending on the family:
-
-| Input Type            | Purpose                    |
-| --------------------- | -------------------------- |
-| PDF NAV files         | Source NAV extraction      |
-| Excel NAV files       | Source NAV extraction      |
-| Workflow file         | Fund/UCN mapping           |
-| Helper reference file | Additional mapping support |
-| Client return files   | MTD extraction             |
-| Outlook mailbox       | Email-based extraction     |
-
----
-
-# 10. Expected Outputs
-
-| Output           | Description                   |
-| ---------------- | ----------------------------- |
-| NAV Output Excel | Final extracted NAV data      |
-| Validation file  | Review-ready data             |
-| Exception rows   | Missing or failed extractions |
-| Audit output     | Archived extraction results   |
-
----
-
-# 11. Validation Process
-
-After model execution, validation must always be performed manually.
-
-## 11.1 Validate Fund Population
-
-Confirm:
-
-* Expected funds are present
-* No funds are missing
-* No unexpected duplicate rows exist
-
----
-
-## 11.2 Validate NAV Values
-
-Cross-check:
-
-* NAV values
-* Currency values
-* Date values
-
-against original client files.
-
----
-
-## 11.3 Validate MTD Values
-
-Confirm:
-
-* MTD percentages are accurate
-* Negative values are correct
-* Latest month values were extracted
-
----
-
-## 11.4 Validate UCN Mapping
+Confirm helper-file rules worked correctly.
 
 Ensure:
 
-* UCN values populated correctly
-* Leading zeros preserved
-* No blank mappings exist
+Generic keywords did not incorrectly match emails
+No critical emails were tagged as no-action
+8. Common Errors
+Error	Possible Cause
+Outlook COM error	Outlook closed/frozen
+Mailbox not found	Wrong mailbox name
+No emails tagged	Filter too restrictive
+Wrong emails tagged	Incorrect helper rule
+Duplicate logic incorrect	Comparison logic too broad
+Category not updating	Outlook sync issue
+9. Debugging Procedure
 
----
+Debugging should always begin by identifying:
 
-## 11.5 Validate Exception Rows
+Whether Outlook connected successfully
+Whether emails were read successfully
+Whether helper file loaded correctly
+Whether category logic matched correctly
+10. Print Statement Debugging Examples
+10.1 Validate Outlook Connection
+print(account.Name)
+print(inbox.Name)
+print(messages.Count)
+
+Purpose:
+
+Confirms Outlook connection
+Confirms Inbox loaded
+Confirms message count
+10.2 Validate Email Reading
+print(message.Subject)
+print(message.SenderEmailAddress)
+print(message.Categories)
+
+Purpose:
+
+Confirms emails are being read correctly
+Confirms sender extraction
+Confirms category extraction
+10.3 Validate DataFrame Creation
+print(df_inbox.shape)
+print(df_inbox.columns)
+print(df_inbox.head())
+
+Purpose:
+
+Confirms inbox dataset created successfully
+10.4 Validate Helper File
+print(df_helper.shape)
+print(df_helper.columns)
+print(df_helper.head())
+
+Purpose:
+
+Confirms helper file loaded correctly
+10.5 Validate Duplicate Logic
+print(df_duplicate_emails.shape)
+print(df_duplicate_emails.head())
+
+Purpose:
+
+Confirms duplicate detection output
+10.6 Validate Category Updates
+print(category_dict)
+print(len(category_dict))
+
+Purpose:
+
+Confirms categories being pushed to Outlook
+11. Recovery Steps
+
+If the model fails:
+
+Close Outlook
+Restart Outlook
+Confirm mailbox sync
+Reopen Dev Shell
+Add print statements
+Rerun model
+Validate categories manually
+12. Important Operational Notes
+Never blindly trust automated tagging
+Always review sample emails
+Do not delete emails through automation
+Keep helper rules controlled
+Escalate major tagging issues immediately
+Maintain audit copies of helper files
+SOP 3 – LATAM Funds Processing Python Model
+1. Purpose
+
+The LATAM Funds Processing Python Model is used to automate processing of LATAM local fund data.
+
+The model:
+
+Reads LATAM source files
+Maps TAX_ID to Fund UCN
+Calculates NAV values
+Calculates Monthly Performance
+Generates standardized output files
+
+The process reduces manual calculation and improves consistency in LATAM fund reporting.
+
+The model is executed through Dev Shell.
+
+2. Process Overview
+Step	Process
+1	Reads LATAM source file
+2	Cleans source data
+3	Reads TAX_ID helper file
+4	Maps Fund UCN
+5	Identifies latest reporting dates
+6	Combines current and prior data
+7	Calculates NAV and performance
+8	Generates final output
+3. Required Inputs
+Input	Purpose
+LATAM Source File	Main fund data
+TAX_ID Mapping File	Fund UCN mapping
+CVM Database File	Historical comparison
+Python Script	Main processing logic
+4. One-Time Package Installation
+pip install pandas numpy openpyxl xlsxwriter customtkinter pywin32 pyxlsb virtualenv autopep8 pylint black tkcalendar pyinstaller python-dateutil PyMuPDF fuzzywuzzy pdfplumber msoffcrypto-tool xlrd
+5. How to Execute the Model
+Step 1 – Open Dev Shell
+
+Launch Dev Shell.
+
+Step 2 – Navigate to Folder
+G:
+cd "G:\2 - Transitory Records\NAV\Hedge Funds\Python Programs\LATAM web extraction - Local Funds"
+Step 3 – Execute Python Script
+python "LATAM_funds_processing_main.py"
+
+Wait until execution completes.
+
+6. Detailed Process Explanation
+6.1 Reading Source File
+
+The model reads the LATAM source file.
+
+The source file may:
+
+Use semicolon delimiters
+Require manual column cleanup
+Contain local formatting
+
+The model standardizes the structure automatically.
+
+6.2 Data Cleanup
+
+The model:
+
+Removes unnecessary columns
+Renames columns
+Converts date formats
+Converts numeric formats
+
+This ensures calculations work correctly.
+
+6.3 TAX_ID Mapping
+
+The model merges source data with:
+
+TAX_ID mapping file
+
+This adds:
+
+Fund UCN
+Fund Name
+
+Rows without Fund UCN are removed.
+
+6.4 Date Logic
+
+The model identifies:
+
+Most recent date
+Prior reporting date
+
+This is required for monthly performance calculation.
+
+6.5 NAV and Performance Calculation
+
+The model calculates:
+
+NAV in thousands
+Monthly Performance
+
+The model compares:
+
+Current values
+Prior values
+
+to calculate performance.
+
+6.6 Output Generation
+
+The model creates:
+
+Final Excel output
+Updated fund dataset
+Calculation-ready output
+7. Validation Steps
+
+After execution:
+
+7.1 Validate Fund UCN Mapping
+
+Ensure:
+
+No missing UCN
+Leading zeros preserved
+7.2 Validate Latest Dates
+
+Ensure:
+
+Correct reporting month selected
+Correct prior date selected
+7.3 Validate NAV Values
+
+Cross-check sample funds against source file.
+
+7.4 Validate Monthly Performance
 
 Review:
 
-* Blank NAV values
-* Blank MTD values
-* Failed extraction rows
-* Merge failures
+Extreme values
+Blank performance rows
+Negative performance values
+8. Common Errors
+Error	Possible Cause
+File not found	Wrong folder
+Column error	Source format changed
+Missing Fund UCN	TAX_ID mapping missing
+Date conversion error	Invalid date format
+Blank performance	Prior date missing
+Output not generated	Output file open
+9. Debugging Procedure
 
-before upload.
+Always debug step by step.
 
----
+Confirm:
 
-# 12. Common Operational Issues
-
-| Issue                  | Possible Cause                         |
-| ---------------------- | -------------------------------------- |
-| File not found         | Wrong directory or missing source file |
-| Blank NAV values       | PDF structure changed                  |
-| Missing funds          | Mapping mismatch                       |
-| Duplicate rows         | Duplicate merge keys                   |
-| Output not created     | Permission issue                       |
-| Outlook access failure | Outlook prompt denied                  |
-| Merge count low        | Fund code mismatch                     |
-| Wrong MTD values       | Latest row not identified correctly    |
-
----
-
-# 13. Detailed Debugging Procedure
-
-Debugging is one of the most important parts of operating Python automations.
-
-Whenever the model fails:
-
-* Do not immediately rerun multiple times
-* Identify the exact failure point
-* Use print statements strategically
-* Validate intermediate outputs
-* Compare with previous successful runs
-
----
-
-# 14. Print Statement Debugging Examples
-
-## 14.1 Confirm File Loaded Properly
-
-```python
-print(df.head())
+Source file loaded
+Mapping file loaded
+Merge completed correctly
+Dates identified correctly
+Calculations completed correctly
+10. Print Statement Debugging Examples
+10.1 Validate Source File
 print(df.shape)
+print(df.head())
 print(df.columns)
-```
 
 Purpose:
 
-* Confirms file loaded successfully
-* Confirms row count
-* Confirms expected columns exist
-
----
-
-## 14.2 Validate Fund Mapping Keys
-
-```python
-print(df['Fund Code'].head())
-print(helper['Fund Code'].head())
-```
+Confirms source file loaded correctly
+10.2 Validate Mapping File
+print(df_ids.shape)
+print(df_ids.columns)
+print(df_ids.head())
 
 Purpose:
 
-* Confirms formatting matches
-* Identifies spacing/case issues
-* Validates merge keys
-
----
-
-## 14.3 Check Common Keys Before Merge
-
-```python
-common_keys = set(df['Fund Code']) & set(helper['Fund Code'])
-print(len(common_keys))
-print(list(common_keys)[:10])
-```
+Confirms mapping file loaded successfully
+10.3 Validate Merge
+print(data.shape)
+print(data[['TAX_ID','Fund UCN','Fund Name']].head())
 
 Purpose:
 
-* Confirms merge logic working
-* Identifies mapping failures
-* Validates helper file consistency
-
----
-
-## 14.4 Validate NAV Extraction
-
-```python
-print(nav_value)
-print(mtd_value)
-```
+Confirms Fund UCN mapping
+10.4 Validate Missing UCN
+print(data['Fund UCN'].isna().sum())
 
 Purpose:
 
-* Confirms extracted values
-* Identifies parsing issues
-* Confirms correct section of PDF read
-
----
-
-## 14.5 Validate Merge Results
-
-```python
-print(df_merge.shape)
-print(df_merge.head())
-```
+Shows rows that will be dropped
+10.5 Validate Date Logic
+print(unique_dates)
+print(most_recent_date)
+print(prior_date)
 
 Purpose:
 
-* Confirms merge completed
-* Identifies dropped rows
-* Validates final dataset
-
----
-
-## 14.6 Identify Missing Funds
-
-```python
-missing = set(expected_funds) - set(output['Fund Name'])
-print(missing)
-```
+Confirms reporting dates selected correctly
+10.6 Validate Final Output
+print(data_combined.shape)
+print(data_combined.tail())
 
 Purpose:
 
-* Identifies funds not extracted
-* Helps isolate failed family
-
----
-
-## 14.7 Debug Specific Fund Family
-
-```python
-print(file_name)
-print(text[:500])
-```
+Confirms final dataset structure
+10.7 Validate Calculations
+print(data_combined[['Fund Name','NAV (Thous)','Monthly_Performance']].tail())
 
 Purpose:
 
-* Confirms correct file being read
-* Helps identify PDF structure changes
+Confirms NAV and performance calculations
+11. Recovery Steps
 
----
+If the model fails:
 
-# 15. Step-by-Step Recovery Procedure
+Close all Excel files
+Validate source files
+Validate mapping files
+Restart Dev Shell
+Add print statements
+Rerun model
+Validate output
+12. Important Operational Notes
+Always validate Fund UCN mapping
+Never ignore dropped rows
+Validate performance calculations manually
+Retain source/output files for audit
+Escalate source structure changes immediately
 
-## Step 1
 
-Close all Excel files.
 
----
 
-## Step 2
 
-Restart Dev Shell.
+Prompt Name: Outlook Cleanser Python Debugging Support
 
----
+I am debugging the Outlook Cleanser Python model used for mailbox tagging, no-action email identification, and duplicate email detection.
 
-## Step 3
+Issue:
+[paste issue here]
 
-Confirm source files are correct.
+Error message from Dev Shell:
+[paste full error here]
 
----
+Code section:
+[paste relevant code here]
 
-## Step 4
+Files / mailbox used:
+- Outlook mailbox:
+- Helper file:
+- Python file:
+- Output/action expected:
 
-Validate helper/workflow file.
+Please help me debug this step by step.
 
----
+Provide:
+1. What the error means in simple terms
+2. Likely root cause
+3. Whether the issue is Outlook-related, mailbox permission-related, category-related, helper file-related, duplicate logic-related, or code-related
+4. Exact line or section likely causing the issue
+5. What print statements I should add
+6. Where I should add those print statements
+7. What output I should expect from each print statement
+8. How to interpret the print results
+9. Step-by-step fix
+10. Validation checks after fixing
 
-## Step 5
+Important:
+- Do not assume mailbox access is correct
+- If categories are not updating, suggest Outlook COM checks
+- If no-action emails are incorrect, suggest helper file and keyword checks
+- If duplicates are wrong, suggest subject/body/attachment comparison checks
+- Keep explanation simple enough for an analyst to follow
 
-Add print statements.
 
----
 
-## Step 6
+Prompt Name: LATAM Funds Processing Python Debugging Support
 
-Run the model again.
-
----
-
-## Step 7
-
-Review traceback carefully.
-
----
-
-## Step 8
-
-Compare with prior successful output.
-
----
-
-# 16. Example Error Interpretation
-
-## Example 1 – File Not Found
-
-```python
-FileNotFoundError
-```
-
-Meaning:
-
-* Wrong directory
-* Missing file
-* Incorrect file name
-
-Resolution:
-
-* Validate cd path
-* Confirm source file exists
-* Confirm extension matches
-
----
-
-## Example 2 – KeyError
-
-```python
-KeyError: 'Fund Code'
-```
-
-Meaning:
-
-* Column missing
-* Column renamed
-* Extra spaces in column name
-
-Resolution:
-
-```python
-print(df.columns)
-```
-
-Compare against expected column structure.
-
----
-
-## Example 3 – Merge Returns 0 Rows
-
-Meaning:
-
-* Mapping mismatch
-* Spacing issue
-* Upper/lowercase issue
-
-Resolution:
-
-```python
-df['Fund Code'] = df['Fund Code'].str.strip().str.upper()
-```
-
-Apply same formatting to helper file.
-
----
-
-## Example 4 – Wrong NAV Extracted
-
-Meaning:
-
-* PDF structure changed
-* Wrong section parsed
-* Multiple NAV values found
-
-Resolution:
-
-* Print extracted text
-* Compare with prior month file
-* Update parsing logic
-
----
-
-# 17. Important Operational Notes
-
-* Always validate output manually before upload.
-* Never trust automation output without spot checks.
-* Preserve audit copies of source files.
-* Avoid editing output manually unless approved.
-* Always compare unusual NAV changes.
-* Validate large variances carefully.
-* Remove duplicate source files from folders.
-* Ensure Outlook prompts are approved during execution.
-
----
-
-# 18. Escalation Requirements
-
-Escalate when:
-
-* Entire family extraction fails
-* PDF structure changes significantly
-* Merge counts drop materially
-* Output file not generated
-* Outlook automation stops working
-* UCN mapping fails repeatedly
-* Large population differences identified
-
-Provide the following during escalation:
-
-* Screenshot of error
-* Source file used
-* Output file
-* Dev Shell logs
-* Exact traceback
-* Steps already attempted
-* Sample failed fund
-
----
-
-# 19. Final Analyst Checklist Before Completion
-
-Before completing the process, confirm:
-
-* Model executed successfully
-* Output file generated
-* NAV values validated
-* MTD values validated
-* UCN mappings validated
-* Missing funds reviewed
-* Exception rows reviewed
-* Audit copy saved
-* Final output ready for downstream usage
-
----
-
-# 20. Conclusion
-
-The Day NAV Python Model is a critical operational automation used to support NAV gathering and reporting activities.
-
-Proper execution, validation, and debugging are essential to ensure:
-
-* Data accuracy
-* Operational stability
-* Audit readiness
-* Timely reporting
-* Reduction of operational risk
-
-Analysts must always combine automation output with operational review and validation before final submission or upload activities.
-
-
-
-
-
-
-
-Prompt Name: Day NAV Python Debugging Support
-
-I am debugging the Day NAV Python model used for NAV/MTD extraction.
+I am debugging the LATAM Funds Processing Python model used for LATAM local fund NAV and monthly performance processing.
 
 Issue:
 [paste issue here]
@@ -806,8 +553,9 @@ Code section:
 [paste relevant code here]
 
 Files used:
-- Source file:
-- Helper/workflow file:
+- LATAM source file:
+- TAX_ID mapping file:
+- CVM database file:
 - Output file:
 
 Please help me debug this step by step.
@@ -815,7 +563,7 @@ Please help me debug this step by step.
 Provide:
 1. What the error means in simple terms
 2. Likely root cause
-3. Whether the issue is file-related, mapping-related, Outlook-related, PDF/Excel extraction-related, or code-related
+3. Whether the issue is source file-related, delimiter-related, TAX_ID mapping-related, Fund UCN-related, date conversion-related, NAV calculation-related, performance calculation-related, or code-related
 4. Exact line or section likely causing the issue
 5. What print statements I should add
 6. Where I should add those print statements
@@ -825,8 +573,8 @@ Provide:
 10. Validation checks after fixing
 
 Important:
-- Do not assume missing values
-- If merge keys may be mismatched, suggest key normalization checks
-- If PDF extraction may have failed, suggest text preview checks
-- If Outlook extraction may have failed, suggest mailbox/category checks
-- Keep the explanation simple enough for an analyst to follow
+- Do not assume TAX_ID mapping is complete
+- If output is blank, check rows dropped after Fund UCN mapping
+- If performance is wrong, check current and prior date logic
+- If CSV is not reading correctly, check delimiter and column split logic
+- Keep explanation simple enough for an analyst to follow
