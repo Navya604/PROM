@@ -1,580 +1,276 @@
-Outlook Cleanser Python Model
+Email Processing Process (JPM NAV DATA BACKUP Mailbox)
 1. Purpose
 
-The Outlook Cleanser Python Model is an automation developed to reduce manual mailbox cleanup effort for the NAV team. The model connects directly to Outlook using Python and automatically reviews emails within the mailbox to identify:
+The Email Processing process is used by the NAV Team to review, organize, track, and process incoming Hedge Fund NAV-related emails received in the JPM NAV DATA BACKUP mailbox.
 
-Duplicate emails
-No-action emails
-Emails requiring category updates
-Emails that match predefined helper-file rules
+The purpose of this process is to:
 
-The model helps improve mailbox organization and operational efficiency by reducing the amount of manual review required by analysts.
+Capture NAV and performance data received from clients.
+Monitor pending client/internal requests.
+Track completion status of NAV processing.
+Ensure all NAV-related emails are reviewed within SLA timelines.
+Prevent missed client data or duplicate processing.
+Maintain organized mailbox management across the NAV team.
 
-The automation uses:
+This process supports daily NAV operations for NAHF and LATAM Hedge Fund reporting activities.
 
-Outlook COM connection
-Helper Excel files
-Category logic
-Sender/domain matching
-Subject keyword matching
-Duplicate email comparison logic
+2. Scope
 
-This process is executed through Dev Shell.
+This SOP applies to:
 
-2. Process Overview
+NAV Analysts
+NAV Operations Team
+Hedge Fund NAV Processing Teams
+Mailbox reviewers responsible for JPM NAV DATA BACKUP mailbox management
 
-The Outlook Cleanser Model performs the following activities internally:
+The process includes:
 
-Step	Process
-1	Connects to Outlook mailbox
-2	Reads Inbox emails
-3	Extracts email properties
-4	Reads helper mapping file
-5	Identifies no-action emails
-6	Identifies duplicate emails
-7	Applies categories back to Outlook
-8	Updates mailbox tagging
-3. Required Inputs
-Input File / Source	Purpose
-Outlook Mailbox	Source of emails
-Helper Excel File	Contains keyword/category rules
-Python Script	Main automation script
-Shared Drive Access	Required for helper/output files
-4. One-Time Package Installation
+Email review
+Categorization
+Processing tracking
+Exception handling
+SLA monitoring
+Filing completed emails
+3. Mailbox Used
 
-Before running the model for the first time, install required packages in Dev Shell.
+The primary mailbox used for this process is:
 
-pip install pandas numpy openpyxl xlsxwriter customtkinter pywin32 pyxlsb virtualenv autopep8 pylint black tkcalendar pyinstaller python-dateutil PyMuPDF fuzzywuzzy pdfplumber msoffcrypto-tool xlrd
+JPM NAV DATA BACKUP
 
-This only needs to be completed once.
+This mailbox is used for:
 
-5. How to Execute the Model
-Step 1 – Open Outlook
+Client NAV submissions
+Monthly hedge fund reports
+Performance files
+Credit requests
+Internal NAV follow-ups
+Chaser emails
+Operational requests
+4. Email Categories Used
 
-Before running the model:
+The following Outlook categories are used during daily processing:
 
-Open Outlook
-Confirm mailbox is fully loaded
-Confirm Inbox is synced
-Confirm shared mailbox is accessible
+Category	Purpose
+Analyst Name	Indicates ownership of the email
+Pending Client Reply	Waiting for response from client
+Pending Internal Reply	Waiting for internal follow-up
+Completed	NAV/process completed
+No Action Required	Informational email only
+Delaware	In-scope processing email
+External Sender	External client email
+5. Daily Email Processing Workflow
+Step 1 – Open JPM NAV DATA BACKUP Mailbox
 
-Do not execute the model if Outlook is frozen or disconnected.
+Open Outlook and navigate to:
 
-Step 2 – Open Dev Shell
+JPM NAV DATA BACKUP → Inbox
 
-Launch Dev Shell from the approved corporate environment.
-
-Wait until terminal loads completely.
-
-Step 3 – Navigate to Model Folder
-
-Example:
-
-R:
-cd "R:\Mumbai\EMEA FUNDS\NAV GATHERING\GLOBAL NAV GATHERING\Automation\Email Tagging Modified(Internal) - JPM\New JPM code"
-
-The path may vary depending on the environment.
-
-Step 4 – Execute Python Script
-python "TAG.py"
-
-After execution begins, do not close Dev Shell.
-
-6. Detailed Process Explanation
-6.1 Outlook Connection
-
-The model first creates an Outlook COM connection using pywin32.
-
-This allows Python to:
-
-Read Outlook folders
-Read email properties
-Update categories
-Access shared mailboxes
-
-The model attempts to connect to:
-
-Main mailbox
-Shared mailbox
-Backup mailbox path if needed
-6.2 Reading Emails
-
-The model scans Inbox emails and extracts:
-
-Subject
-Sender email
-Categories
-EntryID
-Attachment names
-Email body
-
-EntryID is important because it uniquely identifies the Outlook message.
-
-6.3 Helper File Logic
-
-The model reads a helper Excel file containing:
-
-Approved sender emails
-Domains
-Subject keywords
-Categories
-
-The helper file is used to determine:
-
-No-action emails
-Auto-tagging logic
-Category assignment
-6.4 Duplicate Detection Logic
-
-The model identifies duplicate emails using:
-
-Email subject
-Email body similarity
-Attachment names
-
-Image attachments such as:
-
-.png
-.jpg
-.jpeg
-
-are ignored during duplicate comparison.
-
-6.5 Outlook Category Updates
-
-Once matching logic is complete, the model updates Outlook categories automatically.
-
-Examples:
-
-No Action
-Duplicate
-Delaware
-External Sender
-7. Validation Steps
-
-After execution:
-
-7.1 Validate Categories
-
-Review sample emails and confirm:
-
-Correct category applied
-No incorrect tagging
-No important client emails incorrectly categorized
-7.2 Validate Duplicate Logic
-
-Confirm duplicate emails are actual duplicates.
-
-Check:
-
-Subject
-Sender
-Attachments
-7.3 Validate No-Action Logic
-
-Confirm helper-file rules worked correctly.
-
-Ensure:
-
-Generic keywords did not incorrectly match emails
-No critical emails were tagged as no-action
-8. Common Errors
-Error	Possible Cause
-Outlook COM error	Outlook closed/frozen
-Mailbox not found	Wrong mailbox name
-No emails tagged	Filter too restrictive
-Wrong emails tagged	Incorrect helper rule
-Duplicate logic incorrect	Comparison logic too broad
-Category not updating	Outlook sync issue
-9. Debugging Procedure
-
-Debugging should always begin by identifying:
-
-Whether Outlook connected successfully
-Whether emails were read successfully
-Whether helper file loaded correctly
-Whether category logic matched correctly
-10. Print Statement Debugging Examples
-10.1 Validate Outlook Connection
-print(account.Name)
-print(inbox.Name)
-print(messages.Count)
+Review newly received emails starting from the oldest pending email.
 
 Purpose:
 
-Confirms Outlook connection
-Confirms Inbox loaded
-Confirms message count
-10.2 Validate Email Reading
-print(message.Subject)
-print(message.SenderEmailAddress)
-print(message.Categories)
+Prevent SLA breaches.
+Ensure no client email is missed.
+Step 2 – Review Email Content
 
-Purpose:
+Open each email carefully and review:
 
-Confirms emails are being read correctly
-Confirms sender extraction
-Confirms category extraction
-10.3 Validate DataFrame Creation
-print(df_inbox.shape)
-print(df_inbox.columns)
-print(df_inbox.head())
-
-Purpose:
-
-Confirms inbox dataset created successfully
-10.4 Validate Helper File
-print(df_helper.shape)
-print(df_helper.columns)
-print(df_helper.head())
-
-Purpose:
-
-Confirms helper file loaded correctly
-10.5 Validate Duplicate Logic
-print(df_duplicate_emails.shape)
-print(df_duplicate_emails.head())
-
-Purpose:
-
-Confirms duplicate detection output
-10.6 Validate Category Updates
-print(category_dict)
-print(len(category_dict))
-
-Purpose:
-
-Confirms categories being pushed to Outlook
-11. Recovery Steps
-
-If the model fails:
-
-Close Outlook
-Restart Outlook
-Confirm mailbox sync
-Reopen Dev Shell
-Add print statements
-Rerun model
-Validate categories manually
-12. Important Operational Notes
-Never blindly trust automated tagging
-Always review sample emails
-Do not delete emails through automation
-Keep helper rules controlled
-Escalate major tagging issues immediately
-Maintain audit copies of helper files
-SOP 3 – LATAM Funds Processing Python Model
-1. Purpose
-
-The LATAM Funds Processing Python Model is used to automate processing of LATAM local fund data.
-
-The model:
-
-Reads LATAM source files
-Maps TAX_ID to Fund UCN
-Calculates NAV values
-Calculates Monthly Performance
-Generates standardized output files
-
-The process reduces manual calculation and improves consistency in LATAM fund reporting.
-
-The model is executed through Dev Shell.
-
-2. Process Overview
-Step	Process
-1	Reads LATAM source file
-2	Cleans source data
-3	Reads TAX_ID helper file
-4	Maps Fund UCN
-5	Identifies latest reporting dates
-6	Combines current and prior data
-7	Calculates NAV and performance
-8	Generates final output
-3. Required Inputs
-Input	Purpose
-LATAM Source File	Main fund data
-TAX_ID Mapping File	Fund UCN mapping
-CVM Database File	Historical comparison
-Python Script	Main processing logic
-4. One-Time Package Installation
-pip install pandas numpy openpyxl xlsxwriter customtkinter pywin32 pyxlsb virtualenv autopep8 pylint black tkcalendar pyinstaller python-dateutil PyMuPDF fuzzywuzzy pdfplumber msoffcrypto-tool xlrd
-5. How to Execute the Model
-Step 1 – Open Dev Shell
-
-Launch Dev Shell.
-
-Step 2 – Navigate to Folder
-G:
-cd "G:\2 - Transitory Records\NAV\Hedge Funds\Python Programs\LATAM web extraction - Local Funds"
-Step 3 – Execute Python Script
-python "LATAM_funds_processing_main.py"
-
-Wait until execution completes.
-
-6. Detailed Process Explanation
-6.1 Reading Source File
-
-The model reads the LATAM source file.
-
-The source file may:
-
-Use semicolon delimiters
-Require manual column cleanup
-Contain local formatting
-
-The model standardizes the structure automatically.
-
-6.2 Data Cleanup
-
-The model:
-
-Removes unnecessary columns
-Renames columns
-Converts date formats
-Converts numeric formats
-
-This ensures calculations work correctly.
-
-6.3 TAX_ID Mapping
-
-The model merges source data with:
-
-TAX_ID mapping file
-
-This adds:
-
-Fund UCN
 Fund Name
+NAV Date
+MTD / YTD values
+Attachments
+Client comments
+Exception instructions
+Processing hints
 
-Rows without Fund UCN are removed.
+Analysts should carefully determine:
 
-6.4 Date Logic
+Whether the email contains actionable NAV data.
+Whether additional follow-up is required.
+Whether the email is informational only.
+6. Understanding Email Types
+Example 1 – Straightforward NAV Email
 
-The model identifies:
+Some client emails clearly provide:
 
-Most recent date
-Prior reporting date
+NAV
+Performance
+Exposure
+AUM
+Monthly return
 
-This is required for monthly performance calculation.
+These emails are usually easy to process.
 
-6.5 NAV and Performance Calculation
+Typical indicators:
 
-The model calculates:
+Excel attachment
+PDF attachment
+Monthly report
+Clear fund name
 
-NAV in thousands
-Monthly Performance
+These emails can typically move directly into processing.
 
-The model compares:
+Example 2 – Hidden NAV / Newsletter Format
 
-Current values
-Prior values
+Some emails may appear to be newsletters or commentary emails.
 
-to calculate performance.
+However:
 
-6.6 Output Generation
+NAV values may exist deep within the attachment.
+Important data may be hidden in a section such as:
+Trading
+Portfolio
+Monthly Review
+Fund Metrics
 
-The model creates:
+Analysts must:
 
-Final Excel output
-Updated fund dataset
-Calculation-ready output
-7. Validation Steps
+Carefully review attachments.
+Check workflow exception hints.
+Search workflow by Fund IA.
+Verify if special instructions exist.
 
-After execution:
+Failure to review carefully may result in:
 
-7.1 Validate Fund UCN Mapping
+Missing NAV data
+Incorrect uploads
+Delayed processing
+7. Exception / Processing Hints
 
-Ensure:
+Each fund family may contain:
 
-No missing UCN
-Leading zeros preserved
-7.2 Validate Latest Dates
+Exception Notes
+Processing Hints
+Comments
+Fund Codes
 
-Ensure:
+These fields help analysts understand:
 
-Correct reporting month selected
-Correct prior date selected
-7.3 Validate NAV Values
+Special extraction logic
+Family-specific handling
+Known formatting issues
+Alternate NAV locations
 
-Cross-check sample funds against source file.
+Analysts should always:
 
-7.4 Validate Monthly Performance
+Review workflow comments.
+Check processing notes before completing NAV extraction.
+8. Email Categorization Process
 
-Review:
+After reviewing an email:
 
-Extreme values
-Blank performance rows
-Negative performance values
-8. Common Errors
-Error	Possible Cause
-File not found	Wrong folder
-Column error	Source format changed
-Missing Fund UCN	TAX_ID mapping missing
-Date conversion error	Invalid date format
-Blank performance	Prior date missing
-Output not generated	Output file open
-9. Debugging Procedure
-
-Always debug step by step.
-
-Confirm:
-
-Source file loaded
-Mapping file loaded
-Merge completed correctly
-Dates identified correctly
-Calculations completed correctly
-10. Print Statement Debugging Examples
-10.1 Validate Source File
-print(df.shape)
-print(df.head())
-print(df.columns)
-
-Purpose:
-
-Confirms source file loaded correctly
-10.2 Validate Mapping File
-print(df_ids.shape)
-print(df_ids.columns)
-print(df_ids.head())
+Scenario	Required Category
+Analyst processing email	Analyst Name
+Waiting for client response	Pending Client Reply
+Waiting for internal response	Pending Internal Reply
+Processing completed	Completed
+Informational only	No Action Required
 
 Purpose:
 
-Confirms mapping file loaded successfully
-10.3 Validate Merge
-print(data.shape)
-print(data[['TAX_ID','Fund UCN','Fund Name']].head())
+Track ownership
+Improve visibility
+Reduce duplicate work
+Maintain SLA compliance
+9. Filing Completed Emails
+
+Once processing is completed:
+
+Move or file the email into the appropriate completed folder.
+Ensure Outlook categories are updated correctly before filing.
 
 Purpose:
 
-Confirms Fund UCN mapping
-10.4 Validate Missing UCN
-print(data['Fund UCN'].isna().sum())
+Maintain mailbox cleanliness
+Improve audit tracking
+Prevent duplicate processing
+10. SLA Monitoring
 
-Purpose:
+The mailbox operates under strict SLA requirements.
 
-Shows rows that will be dropped
-10.5 Validate Date Logic
-print(unique_dates)
-print(most_recent_date)
-print(prior_date)
+SLA Requirement
 
-Purpose:
+Emails should not remain unprocessed for more than:
 
-Confirms reporting dates selected correctly
-10.6 Validate Final Output
-print(data_combined.shape)
-print(data_combined.tail())
+48 Hours
+11. Mailbox Threshold Monitoring
 
-Purpose:
+Mailbox volumes are monitored using thresholds:
 
-Confirms final dataset structure
-10.7 Validate Calculations
-print(data_combined[['Fund Name','NAV (Thous)','Monthly_Performance']].tail())
+Status	Threshold
+Green	0 – 90 emails
+Amber	91 – 120 emails
+Red	120+ emails
+12. Operational Expectations
+Green Status
 
-Purpose:
+Mailbox volume is healthy and under control.
 
-Confirms NAV and performance calculations
-11. Recovery Steps
+Amber Status
 
-If the model fails:
+Mailbox volume is increasing and requires attention.
 
-Close all Excel files
-Validate source files
-Validate mapping files
-Restart Dev Shell
-Add print statements
-Rerun model
-Validate output
-12. Important Operational Notes
-Always validate Fund UCN mapping
-Never ignore dropped rows
-Validate performance calculations manually
-Retain source/output files for audit
-Escalate source structure changes immediately
+Red Status
 
+Immediate action required:
 
+Escalation may occur.
+Analysts may need reassignment support.
+Backlog reduction becomes priority.
+13. Validation Checks
 
+Before marking an email as completed:
 
+Analysts must verify:
 
-Prompt Name: Outlook Cleanser Python Debugging Support
+Correct fund identified
+Correct NAV captured
+Correct month used
+Attachments reviewed
+No hidden exceptions
+Data uploaded correctly
+Comments updated where required
+14. Common Processing Issues
+Issue	Possible Cause
+Missing NAV	NAV hidden inside attachment
+Wrong fund selected	Similar fund names
+Duplicate processing	Email not categorized correctly
+Delayed processing	Pending reply not tracked
+Missed email	Incorrect categorization
+Incorrect NAV	Wrong section reviewed
+15. Best Practices
+Always start with oldest pending emails.
+Review attachments fully before processing.
+Search workflow for processing hints.
+Validate unusual NAV changes.
+Update categories immediately after review.
+Remove completed backlog daily.
+Monitor SLA thresholds regularly.
+Escalate aging emails early.
+16. Important Operational Notes
+Some client emails contain multiple funds.
+Some newsletters contain hidden NAV data.
+Do not assume informational emails contain no NAV data.
+Always cross-check workflow comments and exceptions.
+Maintain accurate Outlook categorization at all times.
+17. Escalation Guidelines
 
-I am debugging the Outlook Cleanser Python model used for mailbox tagging, no-action email identification, and duplicate email detection.
+Escalate to supervisor/team lead if:
 
-Issue:
-[paste issue here]
+NAV data is unclear
+Client files are corrupted
+SLA breach risk exists
+Duplicate submissions occur
+Missing attachments are identified
+Large variances cannot be explained
+18. End of Day Review
 
-Error message from Dev Shell:
-[paste full error here]
+At end of day:
 
-Code section:
-[paste relevant code here]
+Ensure no unassigned emails remain.
+Review Pending Client Reply items.
+Confirm Completed emails are filed.
+Check mailbox threshold status.
+Ensure aging emails are escalated.
 
-Files / mailbox used:
-- Outlook mailbox:
-- Helper file:
-- Python file:
-- Output/action expected:
-
-Please help me debug this step by step.
-
-Provide:
-1. What the error means in simple terms
-2. Likely root cause
-3. Whether the issue is Outlook-related, mailbox permission-related, category-related, helper file-related, duplicate logic-related, or code-related
-4. Exact line or section likely causing the issue
-5. What print statements I should add
-6. Where I should add those print statements
-7. What output I should expect from each print statement
-8. How to interpret the print results
-9. Step-by-step fix
-10. Validation checks after fixing
-
-Important:
-- Do not assume mailbox access is correct
-- If categories are not updating, suggest Outlook COM checks
-- If no-action emails are incorrect, suggest helper file and keyword checks
-- If duplicates are wrong, suggest subject/body/attachment comparison checks
-- Keep explanation simple enough for an analyst to follow
-
-
-
-Prompt Name: LATAM Funds Processing Python Debugging Support
-
-I am debugging the LATAM Funds Processing Python model used for LATAM local fund NAV and monthly performance processing.
-
-Issue:
-[paste issue here]
-
-Error message from Dev Shell:
-[paste full error here]
-
-Code section:
-[paste relevant code here]
-
-Files used:
-- LATAM source file:
-- TAX_ID mapping file:
-- CVM database file:
-- Output file:
-
-Please help me debug this step by step.
-
-Provide:
-1. What the error means in simple terms
-2. Likely root cause
-3. Whether the issue is source file-related, delimiter-related, TAX_ID mapping-related, Fund UCN-related, date conversion-related, NAV calculation-related, performance calculation-related, or code-related
-4. Exact line or section likely causing the issue
-5. What print statements I should add
-6. Where I should add those print statements
-7. What output I should expect from each print statement
-8. How to interpret the print results
-9. Step-by-step fix
-10. Validation checks after fixing
-
-Important:
-- Do not assume TAX_ID mapping is complete
-- If output is blank, check rows dropped after Fund UCN mapping
-- If performance is wrong, check current and prior date logic
-- If CSV is not reading correctly, check delimiter and column split logic
-- Keep explanation simple enough for an analyst to follow
+This completes the daily Email Processing process.
